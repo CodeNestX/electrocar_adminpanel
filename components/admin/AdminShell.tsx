@@ -1,0 +1,88 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import AdminSidebar from "./AdminSidebar";
+import AdminTopbar from "./AdminTopbar";
+import { useAdminAuth } from "@/context/AdminAuthContext";
+import { unreadMessageCount } from "@/lib/adminStore";
+
+const titles: Record<string, { title: string; subtitle: string }> = {
+  "/admin/dashboard": { title: "داشبورد", subtitle: "نمای کلی و خلاصه وضعیت سیستم" },
+  "/admin/articles": { title: "مقالات", subtitle: "ساخت، ویرایش و انتشار محتوا" },
+  "/admin/messages": { title: "پیام‌ها", subtitle: "صندوق ورودی و ارتباط با کاربران" },
+  "/admin/settings": { title: "تنظیمات", subtitle: "پیکربندی عمومی سایت" },
+  "/admin/admins": { title: "ادمین‌ها", subtitle: "مدیریت حساب‌ها و سطوح دسترسی" },
+  "/admin/users": { title: "کاربران", subtitle: "اعضای ثبت‌نام‌کرده سایت" },
+};
+
+export default function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading } = useAdminAuth();
+  const [drawer, setDrawer] = useState(false);
+
+  const isLogin = pathname === "/admin/login";
+
+  // این شل فقط بعد از احراز هویت و سمت کلاینت رندر می‌شود، پس خواندن مستقیم امن است
+  const unread = isLogin ? 0 : unreadMessageCount();
+
+  useEffect(() => {
+    if (!loading && !user && !isLogin) router.replace("/admin/login");
+  }, [loading, user, isLogin, router]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrawer(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  if (isLogin) return <>{children}</>;
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#050b11]">
+        <p className="animate-pulse text-sm text-white/50">در حال بررسی دسترسی...</p>
+      </div>
+    );
+  }
+
+  const meta = titles[pathname] ?? { title: "پنل مدیریت", subtitle: "ElectroCar" };
+
+  return (
+    <div className="min-h-screen bg-[#050b11] text-white">
+      <div className="flex min-h-screen">
+        {/* سایدبار راست دسکتاپ */}
+        <aside className="sticky top-0 hidden h-screen w-[290px] shrink-0 border-l border-white/10 bg-[#071019] p-4 lg:block">
+          <AdminSidebar unread={unread} />
+        </aside>
+
+        {/* ستون محتوا */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <AdminTopbar title={meta.title} subtitle={meta.subtitle} onMenu={() => setDrawer(true)} />
+          <main className="flex-1 px-4 py-6 sm:px-6">{children}</main>
+          <footer className="border-t border-white/5 px-6 py-4 text-center text-[11px] text-white/30">
+            پنل مدیریت ElectroCar • دنیای خودروهای برقی
+          </footer>
+        </div>
+      </div>
+
+      {/* دراور موبایل از سمت راست */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition lg:hidden ${
+          drawer ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setDrawer(false)}
+      />
+      <aside
+        className={`fixed right-0 top-0 z-50 h-full w-[86%] max-w-xs border-l border-white/10 bg-[#071019] p-4 shadow-2xl transition-transform duration-300 lg:hidden ${
+          drawer ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <AdminSidebar unread={unread} onNavigate={() => setDrawer(false)} />
+      </aside>
+    </div>
+  );
+}
