@@ -42,6 +42,18 @@ const manageLinks = [
       </svg>
     ),
   },
+  {
+    href: "/admin/comments",
+    title: "کامنت‌ها",
+    desc: "تایید دیدگاه‌ها",
+    badgeKey: "comments",
+    icon: (
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M4 5h16v11H9l-5 4V5Z" strokeLinejoin="round" />
+        <path d="M8 9h8M8 12h5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 const systemLinks = [
@@ -135,9 +147,11 @@ function NavLink({
 
 export default function AdminSidebar({
   unread,
+  commentPending,
   onNavigate,
 }: {
   unread: number;
+  commentPending: number;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
@@ -169,7 +183,7 @@ export default function AdminSidebar({
                 desc={l.desc}
                 icon={l.icon}
                 active={pathname === l.href || (l.href === "/admin/dashboard" && pathname === "/admin")}
-                badge={l.badgeKey === "messages" ? unread : undefined}
+                badge={l.badgeKey === "messages" ? unread : l.badgeKey === "comments" ? commentPending : undefined}
                 onNavigate={onNavigate}
               />
             ))}

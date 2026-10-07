@@ -15,6 +15,8 @@ export default function DashboardPage() {
 
   const unread = messages.filter((m) => !m.read).length;
   const published = articles.filter((a) => a.status === "published").length;
+  const drafts = articles.filter((a) => a.status === "draft").length;
+  const archived = articles.filter((a) => a.status === "archived").length;
   const totalViews = articles.reduce((s, a) => s + a.views, 0);
 
   return (
@@ -24,7 +26,7 @@ export default function DashboardPage() {
         <StatCard
           title="کل مقالات"
           value={toFa(articles.length)}
-          hint={`${toFa(published)} منتشرشده • ${toFa(articles.length - published)} پیش‌نویس`}
+          hint={`${toFa(published)} منتشرشده • ${toFa(drafts)} پیش‌نویس • ${toFa(archived)} آرشیو`}
           accent="green"
           icon={
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -90,7 +92,8 @@ export default function DashboardPage() {
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-xs font-bold text-white">{a.title}</span>
                   <span className="mt-1 block text-[10px] text-white/35">
-                    {a.category} • {toFa(a.views)} بازدید • {a.status === "published" ? "منتشرشده" : "پیش‌نویس"}
+                    {a.category} • {toFa(a.views)} بازدید •{" "}
+                    {a.status === "published" ? "منتشرشده" : a.status === "archived" ? "آرشیوشده" : "پیش‌نویس"}
                   </span>
                 </span>
               </li>

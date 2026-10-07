@@ -1,6 +1,7 @@
 "use client";
 
 import { blockMeta, newBlock, type ArticleBlock, type BlockType } from "@/lib/articleBlocks";
+import ImagePicker from "./ImagePicker";
 
 const addOrder: BlockType[] = ["heading", "paragraph", "image", "quote", "list"];
 
@@ -96,12 +97,10 @@ export default function BlockEditor({
           {/* بدنه بلوک */}
           {b.type === "image" ? (
             <div className="space-y-2.5">
-              <input
+              <ImagePicker
+                label="عکس بلوک"
                 value={b.url ?? ""}
-                onChange={(e) => set(b.id, { url: e.target.value })}
-                placeholder="آدرس تصویر (https://...)"
-                dir="ltr"
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-left text-xs text-white outline-none placeholder:text-white/30 focus:border-[#39f77b]/50"
+                onChange={(url) => set(b.id, { url })}
               />
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 <input
@@ -117,19 +116,9 @@ export default function BlockEditor({
                   className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-xs text-white outline-none placeholder:text-white/30 focus:border-[#39f77b]/50"
                 />
               </div>
-              {b.url?.trim() ? (
-                <figure className="overflow-hidden rounded-xl border border-white/10">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={b.url.trim()} alt={b.alt || "پیش‌نمایش"} className="max-h-56 w-full object-cover" />
-                  {b.caption?.trim() && (
-                    <figcaption className="bg-black/30 px-3 py-2 text-center text-[11px] text-white/50">
-                      {b.caption.trim()}
-                    </figcaption>
-                  )}
-                </figure>
-              ) : (
-                <p className="rounded-xl border border-dashed border-white/15 px-3 py-5 text-center text-[11px] text-white/30">
-                  آدرس عکس را وارد کنید تا پیش‌نمایش نمایش داده شود
+              {b.caption?.trim() && b.url?.trim() && (
+                <p className="rounded-xl bg-black/30 px-3 py-2 text-center text-[11px] text-white/50">
+                  توضیح زیر عکس: {b.caption.trim()}
                 </p>
               )}
             </div>

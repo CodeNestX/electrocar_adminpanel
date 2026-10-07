@@ -76,3 +76,29 @@ export function slugify(input: string): string {
     .replace(/^-|-$/g, "");
   return s || `article-${Date.now().toString(36)}`;
 }
+
+const FA_LATIN: Record<string, string> = {
+  ا: "a", آ: "a", ب: "b", پ: "p", ت: "t", ث: "s", ج: "j", چ: "ch",
+  ح: "h", خ: "kh", د: "d", ذ: "z", ر: "r", ز: "z", ژ: "zh",
+  س: "s", ش: "sh", ص: "s", ض: "z", ط: "t", ظ: "z", ع: "a", غ: "gh",
+  ف: "f", ق: "q", ک: "k", ك: "k", گ: "g", ل: "l", م: "m", ن: "n",
+  و: "o", ه: "h", ة: "h", ی: "i", ي: "i", ئ: "i", ؤ: "v", ء: "",
+  "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4",
+  "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9",
+};
+
+/** نام فارسی را به نامک لاتین خوانا تبدیل می‌کند (مثلا «باطری» → batri) */
+export function faToSlug(input: string): string {
+  const s = input
+    .trim()
+    .toLowerCase()
+    .replace(/[ًٌٍَُِّْـ‌]/g, "")
+    .split("")
+    .map((ch) => FA_LATIN[ch] ?? (/[a-z0-9]/.test(ch) ? ch : " "))
+    .join("")
+    .replace(/[\s_]+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+  return s || `cat-${Date.now().toString(36)}`;
+}

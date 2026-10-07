@@ -32,6 +32,18 @@ export interface MockMessage {
   replied: boolean;
 }
 
+export type CommentStatus = "pending" | "approved" | "rejected";
+
+export interface MockComment {
+  id: number;
+  articleTitle: string;
+  articleSlug: string;
+  author: string;
+  content: string;
+  date: string;
+  status: CommentStatus;
+}
+
 export interface MockNotification {
   id: string;
   title: string;
@@ -161,8 +173,55 @@ export const mockMessages: MockMessage[] = [
   },
 ];
 
-export const mockNotifications: MockNotification[] = [
-  { id: "n1", title: "پیام جدید", text: "امیر حسینی درباره شارژ خانگی پیام فرستاد", time: "۲ ساعت پیش", kind: "message" },
+export const mockComments: MockComment[] = [
+  {
+    id: 1,
+    articleTitle: "تفاوت شارژ AC و DC چیست؟",
+    articleSlug: "ac-vs-dc-charging",
+    author: "رضا علوی",
+    content: "مقاله بسیار مفیدی بود. ممنون بابت توضیح شفاف تفاوت شارژ خانگی و سریع.",
+    date: "۱۱ مهر ۱۴۰۵",
+    status: "pending",
+  },
+  {
+    id: 2,
+    articleTitle: "عمر باتری خودرو برقی چقدر است؟",
+    articleSlug: "electric-car-battery-life",
+    author: "نگار احمدی",
+    content: "کاش درباره گارانتی باتری‌ها و هزینه تعویض سلول هم یک مقاله بنویسید.",
+    date: "۱۰ مهر ۱۴۰۵",
+    status: "pending",
+  },
+  {
+    id: 3,
+    articleTitle: "خودروی برقی چگونه کار می‌کند؟ راهنمای کامل برای مبتدیان",
+    articleSlug: "how-does-electric-car-work",
+    author: "امیر حسینی",
+    content: "برای کسی که تازه می‌خواهد وارد دنیای برقی‌ها شود عالی بود.",
+    date: "۹ مهر ۱۴۰۵",
+    status: "pending",
+  },
+  {
+    id: 4,
+    articleTitle: "باتری خودروهای برقی چیست و چه تأثیری بر عملکرد خودرو دارد؟",
+    articleSlug: "electric-car-battery-guide",
+    author: "مهدی صادقی",
+    content: "بخش ظرفیت باتری خیلی کاربردی بود، ممنون.",
+    date: "۸ مهر ۱۴۰۵",
+    status: "approved",
+  },
+  {
+    id: 5,
+    articleTitle: "سیستم ترمز احیاکننده در خودروهای برقی چگونه کار می‌کند؟",
+    articleSlug: "regenerative-braking-explained",
+    author: "کاربر مهمان",
+    content: "تبلیغات بی‌ربط...",
+    date: "۷ مهر ۱۴۰۵",
+    status: "rejected",
+  },
+];
+
+export const mockNotifications: MockNotification[] = [  { id: "n1", title: "پیام جدید", text: "امیر حسینی درباره شارژ خانگی پیام فرستاد", time: "۲ ساعت پیش", kind: "message" },
   { id: "n2", title: "کاربر جدید", text: "دنیا فرهادی ثبت‌نام کرد", time: "۵ ساعت پیش", kind: "user" },
   { id: "n3", title: "دیدگاه جدید", text: "روی مقاله «تفاوت شارژ AC و DC» دیدگاه ثبت شد", time: "دیروز", kind: "article" },
   { id: "n4", title: "یادآوری سیستم", text: "نسخه پشتیبان هفتگی با موفقیت ساخته شد", time: "۲ روز پیش", kind: "system" },

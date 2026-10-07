@@ -5,12 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import AdminSidebar from "./AdminSidebar";
 import AdminTopbar from "./AdminTopbar";
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { unreadMessageCount } from "@/lib/adminStore";
+import { pendingCommentCount, unreadMessageCount } from "@/lib/adminStore";
 
 const titles: Record<string, { title: string; subtitle: string }> = {
   "/admin/dashboard": { title: "داشبورد", subtitle: "نمای کلی و خلاصه وضعیت سیستم" },
   "/admin/articles": { title: "مقالات", subtitle: "ساخت، ویرایش و انتشار محتوا" },
   "/admin/messages": { title: "پیام‌ها", subtitle: "صندوق ورودی و ارتباط با کاربران" },
+  "/admin/comments": { title: "کامنت‌ها", subtitle: "بررسی و تایید دیدگاه‌ها" },
   "/admin/settings": { title: "تنظیمات", subtitle: "پیکربندی عمومی سایت" },
   "/admin/admins": { title: "ادمین‌ها", subtitle: "مدیریت حساب‌ها و سطوح دسترسی" },
   "/admin/users": { title: "کاربران", subtitle: "اعضای ثبت‌نام‌کرده سایت" },
@@ -26,6 +27,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   // این شل فقط بعد از احراز هویت و سمت کلاینت رندر می‌شود، پس خواندن مستقیم امن است
   const unread = isLogin ? 0 : unreadMessageCount();
+  const commentPending = isLogin ? 0 : pendingCommentCount();
 
   useEffect(() => {
     if (!loading && !user && !isLogin) router.replace("/admin/login");
@@ -56,7 +58,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <div className="flex min-h-screen">
         {/* سایدبار راست دسکتاپ */}
         <aside className="sticky top-0 hidden h-screen w-[290px] shrink-0 border-l border-white/10 bg-[#071019] p-4 lg:block">
-          <AdminSidebar unread={unread} />
+          <AdminSidebar unread={unread} commentPending={commentPending} />
         </aside>
 
         {/* ستون محتوا */}
@@ -81,7 +83,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           drawer ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <AdminSidebar unread={unread} onNavigate={() => setDrawer(false)} />
+        <AdminSidebar unread={unread} commentPending={commentPending} onNavigate={() => setDrawer(false)} />
       </aside>
     </div>
   );
